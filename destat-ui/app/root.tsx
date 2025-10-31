@@ -9,6 +9,25 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import Navigation from "./components/ui/navigation";
+import { createModal, getDefaultConfig } from "@rabby-wallet/rabbykit";
+import { createConfig, http } from "@wagmi/core";
+import { hardhat } from "@wagmi/core/chains";
+
+export const config = createConfig(
+  getDefaultConfig({
+    appName: "RabbyKit example",
+    projectId: "58a22d2bc1c793fc31c117ad9ceba8d9",
+    chains: [hardhat],
+    transports: {
+      [hardhat.id]: http(),
+    },
+  }),
+);
+
+export const rabbykit = createModal({
+  wagmi: config,
+});
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -42,7 +61,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <div className="py-20 px-5">
+      <Navigation />
+      <Outlet />
+    </div>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
