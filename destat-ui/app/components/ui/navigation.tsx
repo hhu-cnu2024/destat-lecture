@@ -7,6 +7,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
   NavigationMenuViewport,
 } from "~/components/ui/navigation-menu";
 import { Button } from "./button";
@@ -22,13 +23,18 @@ export default function Navigation() {
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuLink>Dashboard</NavigationMenuLink>
+              <NavigationMenuLink
+                asChild
+                className={navigationMenuTriggerStyle()}
+              >
+                <Link to="/">Dashboard</Link>
+              </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuTrigger>Survey</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                  <li className="row-span-2">
+                  <li className="row-span-2 h-[150px]">
                     <NavigationMenuLink asChild>
                       <a
                         className="from-muted/50 to-muted flex h-full w-full flex-col justify-center rounded-md bg-linear-to-b no-underline outline-hidden transition-all duration-200 select-none focus:shadow-md "
@@ -74,7 +80,7 @@ export default function Navigation() {
               <NavigationMenuTrigger>Archive</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                  <li className="row-span-2">
+                  <li className="row-span-2 h-[150px]">
                     <NavigationMenuLink asChild>
                       <a
                         className="from-muted/50 to-muted flex h-full w-full flex-col justify-center rounded-md bg-linear-to-b no-underline outline-hidden transition-all duration-200 select-none focus:shadow-md "
@@ -106,7 +112,7 @@ export default function Navigation() {
               <NavigationMenuTrigger>Profile</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                  <li className="row-span-2">
+                  <li className="row-span-2 h-[150px]">
                     <NavigationMenuLink asChild>
                       <a
                         className="from-muted/50 to-muted flex h-full w-full flex-col justify-center rounded-md bg-linear-to-b no-underline outline-hidden transition-all duration-200 select-none focus:shadow-md "
