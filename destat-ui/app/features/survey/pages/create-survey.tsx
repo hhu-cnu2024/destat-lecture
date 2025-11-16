@@ -10,15 +10,19 @@ import {
 import { Input } from "~/components/ui/input";
 import type { Route } from "./+types/create-survey";
 import { useState } from "react";
+import { useWriteContract } from "wagmi";
+import { SURVEY_FACTORY, SURVEY_FACTORY_ABI } from "../constant";
+import { parseEther } from "viem";
 
-export const action = async ({ request }: Route.ActionArgs) => {
-  const formData = await request.formData();
-  console.log(formData);
-};
+//export const action = async ({ request }: Route.ActionArgs) => {
+//  const formData = await request.formData();
+//  console.log(formData);
+//};
 
 export default function CreateSruveys() {
   const [options, setOptions] = useState([1]);
   const [image, setImage] = useState("");
+  const { writeContract } = useWriteContract();
 
   const uploadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -44,6 +48,39 @@ export default function CreateSruveys() {
     if (options[i] <= 1) return;
     setOptions(options.map((o, j) => (i == j ? o - 1 : o)));
   };
+  interface Question {
+    question: string;
+    options: string[];
+  }
+  const createSurvey = (e: React.FormEvent<HTMLFormElement>) => {
+    const formData = new FormData(e.currentTarget);
+    const questionsData = formData.getAll("Question") as string[];
+    const questions = questionsData.map((q, i) => {
+      const options = formData.getAll(i.toString()) as string[];
+      return {
+        question: q,
+        options,
+      } as const;
+    });
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+    const targetNumber = formData.get("target") as string;
+    const poolSize = formData.get("pool") as string;
+    writeContract({
+      address: SURVEY_FACTORY,
+      abi: SURVEY_FACTORY_ABI,
+      functionName: "createSurvey",
+      args: [
+        {
+          title,
+          description,
+          targetNumber: BigInt(targetNumber),
+          questions,
+        },
+      ],
+      value: parseEther(poolSize),
+    });
+  };
   return (
     <div className="flex justify-center w-full h-full">
       <Card className="w-full max-w-xl">
@@ -54,7 +91,7 @@ export default function CreateSruveys() {
           </CardDescription>
         </CardHeader>
         <CardContent className="overflow-y-auto h-[70vh]">
-          <Form method="post" encType="multipart/form-data">
+          <Form onSubmit={(e) => createSurvey(e)} encType="multipart/form-data">
             <label className="flex flex-col mb-2">
               <h1 className="font-bold">Title</h1>
               <Input type="text" name="title" />
@@ -62,6 +99,14 @@ export default function CreateSruveys() {
             <label className="flex flex-col mb-2">
               <h1 className="font-bold">Description</h1>
               <Input type="text" name="description" />
+            </label>
+            <label className="flex flex-col mb-2">
+              <h1 className="font-bold">Target Number</h1>
+              <Input type="number" name="target" />
+            </label>
+            <label className="flex flex-col mb-2">
+              <h1 className="font-bold">Reward Pool Size</h1>
+              <Input type="number" name="pool" placeholder="ex) 50(ETH)" />
             </label>
             <h1 className="font-bold">Questions</h1>
             {options.map((n, i) => (
