@@ -1,5 +1,6 @@
 import { ReceiptRussianRuble, SendIcon, User2Icon } from "lucide-react";
-import { Form } from "react-router";
+import { supabase } from "~/postgres/supaclient";
+import { Form, useParams } from "react-router";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -17,6 +18,10 @@ import React, { useEffect, useState } from "react";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { SURVEY_ABI } from "../constant";
 
+export const loader = async ({ params }: Route.ComponentProps) => {
+  const id = params.surveyId;
+  await supabase.rpc("increment_survey_view", { p_id: id });
+};
 export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
   const answers = Object.fromEntries(formData);

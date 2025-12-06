@@ -1,4 +1,4 @@
-import { TrendingUpIcon } from "lucide-react";
+import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -14,12 +14,14 @@ export default function TrendCard({
   trendValue,
   trendMessage,
   periodMessage,
+  check,
 }: {
   title: string;
   value: string;
   trendValue: string;
   trendMessage: string;
   periodMessage: string;
+  check: boolean;
 }) {
   return (
     <Card className="@container/card">
@@ -28,15 +30,28 @@ export default function TrendCard({
         <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
           {value}
         </CardTitle>
-        <CardAction>
-          <TrendingUpIcon />
-          {trendValue}
-        </CardAction>
+        {check ? (
+          <CardAction>
+            <TrendingUpIcon />
+            {trendValue}
+          </CardAction>
+        ) : (
+          <CardAction>
+            <TrendingDownIcon />
+            {trendValue}
+          </CardAction>
+        )}
       </CardHeader>
       <CardFooter className="flex-col items-start gap-1.5 text-sm">
-        <div className="line-clamp-1 flex gap-2 font-medium">
-          {trendMessage} <TrendingUpIcon className="size-4" />
-        </div>
+        {check ? (
+          <div className="line-clamp-1 flex gap-2 font-medium">
+            {trendMessage} <TrendingUpIcon className="size-4" />
+          </div>
+        ) : (
+          <div className="line-clamp-1 flex gap-2 font-medium">
+            {trendMessage} <TrendingDownIcon className="size-4" />
+          </div>
+        )}
         <div className="text-muted-foreground">{periodMessage}</div>
       </CardFooter>
     </Card>

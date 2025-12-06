@@ -6,18 +6,38 @@ import { createPublicClient, getContract, http } from "viem";
 import { hardhat } from "viem/chains";
 import { supabase } from "~/postgres/supaclient";
 import { type Database } from "database.types";
+import type { Route } from "./+types/all-surveys";
 
 type SurveyRow = Database["public"]["Tables"]["survey"]["Row"];
 interface surveyMeta {
   title: string;
   description: string;
   count: number;
-  view: number;
-  image: string;
+  view: number | null;
+  image: string | null;
   address: string;
 }
-export default function AllSruveys() {
-  const [surveys, setSurveys] = useState<surveyMeta[]>([]);
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const { data, error } = await supabase
+    .from("all_survey_overview")
+    .select("*");
+  if (!error) {
+    return data.map((s) => {
+      return {
+        title: s.title!,
+        description: s.description!,
+        view: s.view,
+        count: s.count!,
+        image: s.image,
+        address: s.id!,
+      };
+    });
+  } else {
+    return [];
+  }
+};
+export default function AllSruveys({ loaderData }: Route.ComponentProps) {
+  const [surveys, setSurveys] = useState<surveyMeta[]>(loaderData);
   const onChainLoader = async () => {
     const client = createPublicClient({
       chain: hardhat,
@@ -109,16 +129,15 @@ export default function AllSruveys() {
   };
   useEffect(() => {
     const onChaindata = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 3000));
       const onchainSurveys = await onChainLoader();
       setSurveys(onchainSurveys);
     };
     onChaindata();
-    const offChaindata = async () => {
-      const offchainSurveys = await offChainLoader();
-      setSurveys(offchainSurveys);
-    };
-    offChaindata();
+    // const offChaindata = async () => {
+    //   const offchainSurveys = await offChainLoader();
+    //   setSurveys(offchainSurveys);
+    // };
+    // offChaindata();
   }, []);
 
   return (
@@ -131,9 +150,9 @@ export default function AllSruveys() {
         <SurveyCard
           title={survey.title}
           description={survey.description}
-          view={survey.view}
+          view={survey.view!}
           count={survey.count}
-          image={survey.image}
+          image={survey.image!}
           address={survey.address}
         />
       ))}

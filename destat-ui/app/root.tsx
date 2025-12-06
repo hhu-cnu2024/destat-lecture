@@ -12,20 +12,17 @@ import "./app.css";
 import Navigation from "./components/ui/navigation";
 import { createModal, getDefaultConfig } from "@rabby-wallet/rabbykit";
 import { createConfig, http } from "@wagmi/core";
-import { hardhat } from "@wagmi/core/chains";
+import { hardhat, kairos } from "@wagmi/core/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 
-export const config = createConfig(
-  getDefaultConfig({
-    appName: "RabbyKit example",
-    projectId: "58a22d2bc1c793fc31c117ad9ceba8d9",
-    chains: [hardhat],
-    transports: {
-      [hardhat.id]: http(),
-    },
-  }),
-);
+export const config = createConfig({
+  chains: [hardhat, kairos],
+  transports: {
+    [hardhat.id]: http(),
+    [kairos.id]: http(),
+  },
+});
 
 export const rabbykit = createModal({
   wagmi: config,
