@@ -125,11 +125,12 @@ export default function AllSruveys() {
       // 1) 오프체인 먼저
       const offchainSurveys = await offChainLoader();
       setSurveys(offchainSurveys);
-
+      console.log("✅ setSurveys(offchain)", offchainSurveys);
       // 2) 그 다음 온체인으로 덮어쓰기 (성공하면)
       try {
         const onchainSurveys = await onChainLoader();
         setSurveys(onchainSurveys);
+        console.log("✅ setSurveys(onchain)", onchainSurveys);
       } catch (e) {
         console.error("onChainLoader failed, keep offchain data:", e);
       }
