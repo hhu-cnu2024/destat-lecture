@@ -107,18 +107,33 @@ export default function AllSruveys() {
     //   },
     // ];
   };
+  // useEffect(() => {
+  //   const onChaindata = async () => {
+  //     await new Promise((resolve) => setTimeout(resolve, 3000));
+  //     const onchainSurveys = await onChainLoader();
+  //     setSurveys(onchainSurveys);
+  //   };
+  //   onChaindata();
+  //   const offChaindata = async () => {
+  //     const offchainSurveys = await offChainLoader();
+  //     setSurveys(offchainSurveys);
+  //   };
+  //   offChaindata();
+  // }, []);
   useEffect(() => {
-    const onChaindata = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      const onchainSurveys = await onChainLoader();
-      setSurveys(onchainSurveys);
-    };
-    onChaindata();
-    const offChaindata = async () => {
+    (async () => {
+      // 1) 오프체인 먼저
       const offchainSurveys = await offChainLoader();
       setSurveys(offchainSurveys);
-    };
-    offChaindata();
+
+      // 2) 그 다음 온체인으로 덮어쓰기 (성공하면)
+      try {
+        const onchainSurveys = await onChainLoader();
+        setSurveys(onchainSurveys);
+      } catch (e) {
+        console.error("onChainLoader failed, keep offchain data:", e);
+      }
+    })();
   }, []);
 
   return (
