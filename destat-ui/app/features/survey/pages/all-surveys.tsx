@@ -107,35 +107,36 @@ export default function AllSruveys() {
     //   },
     // ];
   };
+  useEffect(() => {
+    const onChaindata = async () => {
+      //await offChainLoader();
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      const onchainSurveys = await onChainLoader();
+      setSurveys(onchainSurveys);
+    };
+    onChaindata();
+    // const offChaindata = async () => {
+    //   const offchainSurveys = await offChainLoader();
+    //   setSurveys(offchainSurveys);
+    // };
+    // offChaindata();
+  }, []);
   // useEffect(() => {
-  //   const onChaindata = async () => {
-  //     await new Promise((resolve) => setTimeout(resolve, 3000));
-  //     const onchainSurveys = await onChainLoader();
-  //     setSurveys(onchainSurveys);
-  //   };
-  //   onChaindata();
-  //   const offChaindata = async () => {
+  //   (async () => {
+  //     // 1) 오프체인 먼저
   //     const offchainSurveys = await offChainLoader();
   //     setSurveys(offchainSurveys);
-  //   };
-  //   offChaindata();
+  //     console.log("✅ setSurveys(offchain)", offchainSurveys);
+  //     // 2) 그 다음 온체인으로 덮어쓰기 (성공하면)
+  //     try {
+  //       const onchainSurveys = await onChainLoader();
+  //       setSurveys(onchainSurveys);
+  //       console.log("✅ setSurveys(onchain)", onchainSurveys);
+  //     } catch (e) {
+  //       console.error("onChainLoader failed, keep offchain data:", e);
+  //     }
+  //   })();
   // }, []);
-  useEffect(() => {
-    (async () => {
-      // 1) 오프체인 먼저
-      const offchainSurveys = await offChainLoader();
-      setSurveys(offchainSurveys);
-      console.log("✅ setSurveys(offchain)", offchainSurveys);
-      // 2) 그 다음 온체인으로 덮어쓰기 (성공하면)
-      try {
-        const onchainSurveys = await onChainLoader();
-        setSurveys(onchainSurveys);
-        console.log("✅ setSurveys(onchain)", onchainSurveys);
-      } catch (e) {
-        console.error("onChainLoader failed, keep offchain data:", e);
-      }
-    })();
-  }, []);
 
   return (
     <div className="grid grid-cols-4 gap-4 overflow-y-auto h-[90vh]">
