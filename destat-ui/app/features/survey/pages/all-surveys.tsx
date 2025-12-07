@@ -3,7 +3,7 @@ import SurveyCard from "../components/survey-card";
 import { SURVEY_ABI, SURVEY_FACTORY, SURVEY_FACTORY_ABI } from "../constant";
 import { useReadContract } from "wagmi";
 import { createPublicClient, getContract, http } from "viem";
-import { hardhat } from "viem/chains";
+import { hardhat, kairos } from "viem/chains";
 import { supabase } from "~/postgres/supaclient";
 import { type Database } from "database.types";
 
@@ -20,7 +20,7 @@ export default function AllSruveys() {
   const [surveys, setSurveys] = useState<surveyMeta[]>([]);
   const onChainLoader = async () => {
     const client = createPublicClient({
-      chain: hardhat,
+      chain: kairos,
       transport: http(),
     });
     const surveyFactroyContract = getContract({
