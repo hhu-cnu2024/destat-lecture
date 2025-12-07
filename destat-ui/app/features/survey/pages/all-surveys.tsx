@@ -6,7 +6,6 @@ import { createPublicClient, getContract, http } from "viem";
 import { hardhat } from "viem/chains";
 import { supabase } from "~/postgres/supaclient";
 import { type Database } from "database.types";
-import type { Route } from "./+types/all-surveys";
 
 type SurveyRow = Database["public"]["Tables"]["survey"]["Row"];
 interface surveyMeta {
@@ -17,27 +16,8 @@ interface surveyMeta {
   image: string | null;
   address: string;
 }
-export const loader = async ({ request }: Route.LoaderArgs) => {
-  const { data, error } = await supabase
-    .from("all_survey_overview")
-    .select("*");
-  if (!error) {
-    return data.map((s) => {
-      return {
-        title: s.title!,
-        description: s.description!,
-        view: s.view,
-        count: s.count!,
-        image: s.image,
-        address: s.id!,
-      };
-    });
-  } else {
-    return [];
-  }
-};
-export default function AllSruveys({ loaderData }: Route.ComponentProps) {
-  const [surveys, setSurveys] = useState<surveyMeta[]>(loaderData);
+export default function AllSruveys() {
+  const [surveys, setSurveys] = useState<surveyMeta[]>([]);
   const onChainLoader = async () => {
     const client = createPublicClient({
       chain: hardhat,
@@ -129,15 +109,16 @@ export default function AllSruveys({ loaderData }: Route.ComponentProps) {
   };
   useEffect(() => {
     const onChaindata = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 300));
       const onchainSurveys = await onChainLoader();
       setSurveys(onchainSurveys);
     };
     onChaindata();
-    // const offChaindata = async () => {
-    //   const offchainSurveys = await offChainLoader();
-    //   setSurveys(offchainSurveys);
-    // };
-    // offChaindata();
+    const offChaindata = async () => {
+      const offchainSurveys = await offChainLoader();
+      setSurveys(offchainSurveys);
+    };
+    offChaindata();
   }, []);
 
   return (
